@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
+import 'welcome_page.dart';
+import 'users_page.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return MaterialApp(
       title: 'Lenguaje de Señas',
-      home: Scaffold(
-        appBar: AppBar(
-          title: Center(
-            child: Text('Lenguaje de Señas')
-          ),
-        ),
-        body: Center(
-          child: Text('Hola Mundo')
-        ),
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primarySwatch: Colors.lightBlue,
+        fontFamily: 'Nunito',
       ),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => WelcomePage(),
+        '/users': (context) => UsersPage(),
+      },
     );
   }
-
 }
