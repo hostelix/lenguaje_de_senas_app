@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'welcome_page.dart';
-import 'users_page.dart';
+import 'notification_page.dart';
+
 
 void main() => runApp(MyApp());
 
@@ -14,11 +14,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.lightBlue,
         fontFamily: 'Nunito',
       ),
-      initialRoute: '/',
-      routes: {
-        '/': (context) => WelcomePage(),
-        '/users': (context) => UsersPage(),
-      },
+      home: NotificationPage(),
     );
   }
 }
