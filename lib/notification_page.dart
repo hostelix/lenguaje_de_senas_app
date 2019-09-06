@@ -14,6 +14,7 @@ class _NotificationPageState extends State<NotificationPage> {
     );
   }
 
+
   Widget _layoutDetails(){
     Orientation orientation = MediaQuery.of(context).orientation;
     var width = MediaQuery.of(context).size.width;
@@ -105,11 +106,8 @@ class _NotificationPageState extends State<NotificationPage> {
               borderRadius: new BorderRadius.circular(30.0),
             ),
           ),
-        ),
-
-        
+        ),      
       );
-
 
       final body = Container(
         width: width,
