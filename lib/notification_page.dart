@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'users_page.dart';
+//import 'users_page.dart';
+import 'main_page.dart';
 
 class NotificationPage extends StatefulWidget {
   @override
@@ -100,7 +101,7 @@ class _NotificationPageState extends State<NotificationPage> {
               ),
             ),
             onPressed: () {
-              Navigator.push(context,MaterialPageRoute(builder: (context) => UsersPage()));
+              Navigator.push(context,MaterialPageRoute(builder: (context) => MainPage()));
             },
             shape: new RoundedRectangleBorder(
               borderRadius: new BorderRadius.circular(30.0),
@@ -217,7 +218,7 @@ class _NotificationPageState extends State<NotificationPage> {
               ),
             ),
             onPressed: () {
-              Navigator.push(context,MaterialPageRoute(builder: (context) => UsersPage()));
+              Navigator.push(context,MaterialPageRoute(builder: (context) => MainPage()));
             },
             shape: new RoundedRectangleBorder(
               borderRadius: new BorderRadius.circular(30.0),

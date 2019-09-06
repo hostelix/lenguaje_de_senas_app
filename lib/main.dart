@@ -1,6 +1,4 @@
-
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'notification_page.dart';
 import 'users_page.dart';
 
@@ -17,7 +15,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.lightBlue,
         fontFamily: 'Nunito',
       ),
-      home: NotificationPage(),
+      home: UsersPage(),
     );
   }
 
