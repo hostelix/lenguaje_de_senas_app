@@ -31,7 +31,7 @@ class DBLenguajeSenas{
 
   void onCreateFunc (Database db, int version) async{
     //create table
-    await db.execute('CREATE TABLE $tableName (idUsers INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(30));');
+    await db.execute('CREATE TABLE $tableName (idUsers INTEGER PRIMARY KEY AUTOINCREMENT, nameUsers VARCHAR(30), urlImageUsers text );');
   }
 
   /*
@@ -50,6 +50,7 @@ class DBLenguajeSenas{
       User user = new User();
       user.idUser = list[i]['idUsers'];
       user.nameUser =  list[i]['nameUsers'];
+      user.urlImageUser =  list[i]['urlImageUsers'];
 
       users.add(user);
     }
@@ -61,7 +62,7 @@ class DBLenguajeSenas{
   // Add New User
   void addNewUser (User user) async{
     var dbConnection = await db;
-    String query = 'INSERT INTO $tableName (nameUsers) VALUE (\'${user.nameUser}\')';
+    String query = 'INSERT INTO $tableName (nameUsers, urlImageUsers) VALUE (\'${user.nameUser}\',\'${user.urlImageUser}\')';
     await dbConnection.transaction((transaction) async{
       return await transaction.rawInsert(query);
     });
@@ -71,7 +72,7 @@ class DBLenguajeSenas{
   // Update User
   void updateUser (User user) async{
     var dbConnection = await db;
-    String query = 'UPDATE $tableName SET nameUsers=\'${user.nameUser}\' WHERE idUsers=${user.idUser}';
+    String query = 'UPDATE $tableName SET nameUsers=\'${user.nameUser}\', urlImageUsers=\'${user.urlImageUser}\' WHERE idUsers=${user.idUser}';
     await dbConnection.transaction((transaction) async{
       return await transaction.rawQuery(query);
     });

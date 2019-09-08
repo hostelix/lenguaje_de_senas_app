@@ -1,4 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:lenguaje_de_senas_app/Model/user.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
+import 'dataBase.dart';
+import 'dart:async';
+import 'package:flutter/services.dart';
+
+Future<List<User>> getUsers() async{
+  var dbLenguajeSenas = DBLenguajeSenas();
+  Future<List<User>> users = dbLenguajeSenas.getUsers();
+  return users;
+}
 
 class UsersPage extends StatefulWidget {
   @override
@@ -7,8 +18,7 @@ class UsersPage extends StatefulWidget {
 
 class _UsersPageState extends State<UsersPage> {
   bool _showProgress = false;
-
-  bool _users = true;
+  final _formKey = new GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -21,114 +31,58 @@ class _UsersPageState extends State<UsersPage> {
         ),
       ),
       body:SingleChildScrollView(
-        child:  checkListUsers(),
+        child:  Padding(
+          padding: EdgeInsets.all(30.0),
+          child: Container(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                logo(),
+                SizedBox(height: 30.0),
+                Text(
+                  "Seleccionar Usuario:",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 28.0,
+                    fontFamily: "Roboto",
+                    color: Colors.white,
+                    fontWeight: FontWeight.w300,
+                  ),
+                ),
+                SizedBox(height: 15.0),
+                FutureBuilder(
+                  future: getUsers(),
+                  builder: (context, snapshot){
+                    if(snapshot.data == null || snapshot.data.isEmpty)
+                    {
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: <Widget>[
+                          GestureDetector(
+                            onTap: () => _showDialogNew(),
+                            child: noUsers(),
+                          ),
+                        ],
+                      );
+                    }
+                    else
+                    {
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: snapshot.data.map<Widget>((user)=>drawUser(user)).toList()
+
+                      );
+                    }
+                  },
+                )
+              ],
+            ),
+          ),
+        )
       ),
     );
   }
-
-  checkListUsers(){
-
-    if (_users){
-      return Padding(
-        padding: EdgeInsets.all(30.0),
-        child: Container(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              logo(),
-              SizedBox(height: 30.0),
-              Text(
-                "Seleccionar Usuario:",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 28.0,
-                  fontFamily: "Roboto",
-                  color: Colors.white,
-                  fontWeight: FontWeight.w300,
-                ),
-              ),
-              SizedBox(height: 30.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  GestureDetector(
-                    //onTap: () => loginUser("user1"),
-                    child: user1(),
-                  ),
-                  GestureDetector(
-                    //onTap: () => loginUser("user2"),
-                    child: user2(),
-                  ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  GestureDetector(
-                    //onTap: () => loginUser("user1"),
-                    child: user1(),
-                  ),
-                  GestureDetector(
-                    //onTap: () => loginUser("user2"),
-                    child: user2(),
-                  ),
-                ],
-              ),
-              SizedBox(height: 30.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  GestureDetector(
-                    onTap: () => _showDialog(),
-                    child: noUsers(),
-                  ),
-                  
-                ],
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-    else
-    {
-      return Padding(
-        padding: EdgeInsets.all(30.0),
-        child: Container(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              logo(),
-              SizedBox(height: 20.0),
-              Text(
-                "Seleccionar Usuario:",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 28.0,
-                  fontFamily: "Roboto",
-                  color: Colors.white,
-                  fontWeight: FontWeight.w300,
-                ),
-              ),
-              SizedBox(height: 30.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  GestureDetector(
-                    onTap: () => _showDialog(),
-                    child: noUsers(),
-                  ),
-                  
-                ],
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-    }
 
   Card noUsers(){
     return Card(
@@ -151,17 +105,17 @@ class _UsersPageState extends State<UsersPage> {
   }  
 
 
-  Card user1() {
+  Widget drawUser(User user) {
     return Card(
       child: Container(
         padding: EdgeInsets.all(25.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            userImage('assets/users/angel_goitia.jpg'),
+            userImage('${user.urlImageUser}'),
             SizedBox(height: 5.0),
             Text(
-              'Angel Goitia',
+              '${user.nameUser}',
             ),
           ],
         ),
@@ -214,45 +168,76 @@ class _UsersPageState extends State<UsersPage> {
     }
   }
 
-  void _showDialog() {
-    String nameUsers = '';
-    // flutter defined function
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        // return object of type Dialog
-        return AlertDialog(
-          title: Text('Nuevo Usuario'),
-          content: new Row(
-            children: <Widget>[
-              new Expanded(
-                  child: new TextField(
-                autofocus: true,
-                decoration: new InputDecoration(
-                    labelText: 'Nombre y Apellido', hintText: 'Juan Pablo Bonet'),
-                onChanged: (value) {
-                  nameUsers = value;
-                },
-              ))
-            ],
-          ),
-          actions: <Widget>[
-            FlatButton(
-              child: Text('Guardar'),
-              onPressed: () {
-                Navigator.of(context).pop(nameUsers);
-              },
-            ),
-            FlatButton(
-              child: Text('Cerrar'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
+  void _showDialogNew(){
+    String nameUser = '';
+
+    Alert(
+
+        context: context,
+        title: "Nuevo Usuario",
+        content: Column(
+          children: <Widget>[
+            noImage(),
+            Form(
+              key: _formKey,
+              child:TextFormField(
+                inputFormatters: [
+                  WhitelistingTextInputFormatter(RegExp("[a-zA-Z]"))
+                ],
+                textInputAction: TextInputAction.done,
+                decoration: InputDecoration(
+                  icon: Icon(Icons.account_circle),
+                  labelText: 'Nombre y Apellido',
+                ),
+                validator:(value) => value.isEmpty ? 'Ingrese tu nombre y apellido.':null
+              ),
+            )
+            
           ],
-        );
-      },
-    );
+        ),
+        buttons: [
+          DialogButton(
+            onPressed: (){
+              setState(() {
+                if(_formKey.currentState.validate()){
+                  Navigator.of(context).pop(nameUser);
+                } 
+              });
+            }, 
+            child: Text(
+              "GUARDAR",
+              style: TextStyle(color: Colors.white, fontSize: 20),
+            ),
+            color: Colors.blue,
+          ),
+          DialogButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(
+              "CERRAR",
+              style: TextStyle(color: Colors.white, fontSize: 20),
+            ),
+            color: Colors.red,
+          ),
+        ]).show();
   }
   
+  Card noImage(){
+    return Card(
+      child: Container(
+        padding: EdgeInsets.all(25.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Icon(Icons.add_a_photo, color:Colors.black, size: 30.0,),
+            SizedBox(height: 5.0),
+            Text(
+              'Agregar',
+            ),
+          ],
+        ),
+      ),
+      elevation: 5.0,
+      shape: CircleBorder(),
+    );
+  }
 }
