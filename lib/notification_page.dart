@@ -51,7 +51,7 @@ class _NotificationPageState extends State<NotificationPage> {
       final descripcion = Padding(
         padding: EdgeInsets.all(18.0),
         child: Text(
-          'Es una aplicación para el aprendizaje de lenguaje de señas especialmente para niños, niñas y adolecentes.',
+          'Es una aplicación para el aprendizaje de lenguaje de señas especialmente para niños, niñas y adolescentes.',
           textAlign: TextAlign.justify,
           style: TextStyle(fontSize:width/20 , color: Colors.white),
         ),
@@ -168,7 +168,7 @@ class _NotificationPageState extends State<NotificationPage> {
       final descripcion = Padding(
         padding: EdgeInsets.all(8.0),
         child: Text(
-          'Es una aplicación para el aprendizaje de lenguaje de señas especialmente para niños, niñas y adolecentes.',
+          'Es una aplicación para el aprendizaje de lenguaje de señas especialmente para niños, niñas y adolescentes.',
           textAlign: TextAlign.justify,
           style: TextStyle(fontSize:width/35 , color: Colors.white),
         ),

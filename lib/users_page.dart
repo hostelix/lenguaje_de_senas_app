@@ -8,7 +8,7 @@ class UsersPage extends StatefulWidget {
 class _UsersPageState extends State<UsersPage> {
   bool _showProgress = false;
 
-  bool _users = false;
+  bool _users = true;
 
   @override
   Widget build(BuildContext context) {
@@ -53,12 +53,12 @@ class _UsersPageState extends State<UsersPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
                   GestureDetector(
-                    //onTap: () => loginUser("batman"),
-                    child: batman(),
+                    //onTap: () => loginUser("user1"),
+                    child: user1(),
                   ),
                   GestureDetector(
-                    //onTap: () => loginUser("superman"),
-                    child: superman(),
+                    //onTap: () => loginUser("user2"),
+                    child: user2(),
                   ),
                 ],
               ),
@@ -66,20 +66,24 @@ class _UsersPageState extends State<UsersPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
                   GestureDetector(
-                    //onTap: () => loginUser("batman"),
-                    child: batman(),
+                    //onTap: () => loginUser("user1"),
+                    child: user1(),
                   ),
                   GestureDetector(
-                    //onTap: () => loginUser("superman"),
-                    child: superman(),
+                    //onTap: () => loginUser("user2"),
+                    child: user2(),
                   ),
                 ],
               ),
               SizedBox(height: 30.0),
               Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
-                  showProgress(),
+                  GestureDetector(
+                    onTap: () => _showDialog(),
+                    child: noUsers(),
+                  ),
+                  
                 ],
               ),
             ],
@@ -119,13 +123,6 @@ class _UsersPageState extends State<UsersPage> {
                   
                 ],
               ),
-              SizedBox(height: 30.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  showProgress(),
-                ],
-              ),
             ],
           ),
         ),
@@ -154,17 +151,17 @@ class _UsersPageState extends State<UsersPage> {
   }  
 
 
-  Card superman() {
+  Card user1() {
     return Card(
       child: Container(
         padding: EdgeInsets.all(25.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            userImage('assets/activity/family/logo_family.png'),
+            userImage('assets/users/angel_goitia.jpg'),
             SizedBox(height: 5.0),
             Text(
-              'Familia 1',
+              'Angel Goitia',
             ),
           ],
         ),
@@ -174,15 +171,15 @@ class _UsersPageState extends State<UsersPage> {
     );
   }
 
-  Card batman() {
+  Card user2() {
     return Card(
       child: Container(
         child: Column(
           children: <Widget>[
-            userImage('assets/activity/family/logo_family2.png'),
+            userImage('assets/users/elizabeth_guardia.jpg'),
             SizedBox(height: 5.0),
             Text(
-              'Familia 2',
+              'Elizabeth Guardia',
             ),
           ],
         ),
