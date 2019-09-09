@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:lenguaje_de_senas_app/Model/user.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'dataBase.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 
 Future<List<User>> getUsers() async{
   var dbLenguajeSenas = DBLenguajeSenas();
@@ -20,6 +23,21 @@ class _UsersPageState extends State<UsersPage> {
   bool _showProgress = false;
   final _formKey = new GlobalKey<FormState>();
 
+  File image;
+
+  Future getImage() async{
+    var picture = await ImagePicker.pickImage(source: ImageSource.camera);
+    setState(() {
+     image = picture; 
+    });
+  }
+
+  Future getGallery() async{
+    var picture = await ImagePicker.pickImage(source: ImageSource.gallery);
+    setState(() {
+     image = picture; 
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,11 +110,7 @@ class _UsersPageState extends State<UsersPage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Icon(Icons.person_add, color:Colors.black, size: 30.0,),
-            SizedBox(height: 5.0),
-            Text(
-              'Agregar',
-            ),
+            image == null? drawIconAdd() :new Image.file(image),
           ],
         ),
       ),
@@ -104,6 +118,18 @@ class _UsersPageState extends State<UsersPage> {
       shape: CircleBorder(),
     );
   }  
+
+  drawIconAdd(){
+    return Column(
+      children: <Widget>[
+        Icon(Icons.person_add, color:Colors.black, size: 30.0,),
+        SizedBox(height: 5.0),
+        Text(
+          'Agregar',
+        ),
+      ],
+    );
+  }
 
 
   Widget drawUser(User user) {
@@ -126,24 +152,6 @@ class _UsersPageState extends State<UsersPage> {
     );
   }
 
-  Card user2() {
-    return Card(
-      child: Container(
-        child: Column(
-          children: <Widget>[
-            userImage('assets/users/elizabeth_guardia.jpg'),
-            SizedBox(height: 5.0),
-            Text(
-              'Elizabeth Guardia',
-            ),
-          ],
-        ),
-        padding: EdgeInsets.all(25.0),
-      ),
-      elevation: 5.0,
-      shape: CircleBorder(),
-    );
-  }
 
   Widget userImage(String imagePath) {
     return Image(
@@ -221,8 +229,7 @@ class _UsersPageState extends State<UsersPage> {
           ),
         ]).show();
   }
-  
-  // agregar GestureDetector para agregar ontap
+
   Card noImage(){
     return Card(
       child: GestureDetector(
@@ -253,7 +260,10 @@ class _UsersPageState extends State<UsersPage> {
       title: 'Completar acción utilizando',
       buttons: [
         DialogButton(
-          onPressed: (){}, 
+          onPressed: (){
+            Navigator.of(context).pop();
+            getImage();
+          }, 
           child: Row(
             children: <Widget>[
               Text("  "),
@@ -267,7 +277,11 @@ class _UsersPageState extends State<UsersPage> {
           color: Colors.orange,
         ),
         DialogButton(
-          onPressed: (){}, 
+          onPressed: (){
+            Navigator.of(context).pop();
+            getGallery();
+            
+          }, 
           child: Row(
           children: <Widget>[
             Text("  "),

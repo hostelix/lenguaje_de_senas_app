@@ -26,6 +26,7 @@ dependencies:
   sqflite: ^1.1.6
   path_provider: ^0.4.1
   rflutter_alert: ^1.0.3
+  image_picker: ^0.4.4
 
 dev_dependencies:
   flutter_test:
