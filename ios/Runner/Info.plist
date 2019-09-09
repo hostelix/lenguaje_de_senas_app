@@ -25,6 +25,10 @@
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
+	<key> NSPhotoLibraryUsageDescription </key>
+	<string> Se necesita el permiso de galeria seleccionar imagen para el perfil </string>
+	<key> NSCameraUsageDescription </key>
+	<string> Se necesita el permiso de Camara para usar foto en el perfil</string>
 	<string>Main</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>

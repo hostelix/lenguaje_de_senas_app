@@ -20,6 +20,7 @@ class _UsersPageState extends State<UsersPage> {
   bool _showProgress = false;
   final _formKey = new GlobalKey<FormState>();
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -221,23 +222,67 @@ class _UsersPageState extends State<UsersPage> {
         ]).show();
   }
   
+  // agregar GestureDetector para agregar ontap
   Card noImage(){
     return Card(
-      child: Container(
-        padding: EdgeInsets.all(25.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Icon(Icons.add_a_photo, color:Colors.black, size: 30.0,),
-            SizedBox(height: 5.0),
-            Text(
-              'Agregar',
-            ),
-          ],
+      child: GestureDetector(
+        onTap: () => showDialogPicture(),
+        child: Container(
+          padding: EdgeInsets.all(25.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Icon(Icons.add_a_photo, color:Colors.black, size: 30.0,),
+              SizedBox(height: 5.0),
+              Text(
+                'Agregar',
+              ),
+            ],
+          ),
         ),
       ),
       elevation: 5.0,
       shape: CircleBorder(),
     );
+  }
+
+  void showDialogPicture(){
+    
+    Alert(
+      context: context,
+      title: 'Completar acción utilizando',
+      buttons: [
+        DialogButton(
+          onPressed: (){}, 
+          child: Row(
+            children: <Widget>[
+              Text("  "),
+              Icon(Icons.camera_alt, color: Colors.white),
+              Text(
+                "   Camara",
+                style: TextStyle(color: Colors.white, fontSize: 20),
+              ),
+            ],
+          ),
+          color: Colors.orange,
+        ),
+        DialogButton(
+          onPressed: (){}, 
+          child: Row(
+          children: <Widget>[
+            Text("  "),
+            Icon(Icons.photo, color: Colors.white),
+            Text(
+              "   Galeria",
+              style: TextStyle(color: Colors.white, fontSize: 20),
+            ),
+          ],
+        ),
+          
+          color: Colors.orange,
+        ),
+      ]
+    ).show();
+
   }
 }
