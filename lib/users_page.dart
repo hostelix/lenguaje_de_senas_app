@@ -20,13 +20,14 @@ class UsersPage extends StatefulWidget {
 }
 
 class _UsersPageState extends State<UsersPage> {
-  bool _showProgress = false;
   final _formKey = new GlobalKey<FormState>();
+
 
   File image;
 
   Future getImage() async{
     var picture = await ImagePicker.pickImage(source: ImageSource.camera);
+    print(picture);
     setState(() {
      image = picture; 
     });
@@ -34,6 +35,7 @@ class _UsersPageState extends State<UsersPage> {
 
   Future getGallery() async{
     var picture = await ImagePicker.pickImage(source: ImageSource.gallery);
+    print(picture);
     setState(() {
      image = picture; 
     });
@@ -42,6 +44,7 @@ class _UsersPageState extends State<UsersPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      
       backgroundColor: Colors.orange,
       appBar: AppBar(
         backgroundColor: Colors.blue,
@@ -110,7 +113,11 @@ class _UsersPageState extends State<UsersPage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            image == null? drawIconAdd() :new Image.file(image),
+            Icon(Icons.person_add, color:Colors.black, size: 30.0,),
+            SizedBox(height: 5.0),
+            Text(
+              'Agregar',
+            ),
           ],
         ),
       ),
@@ -118,18 +125,6 @@ class _UsersPageState extends State<UsersPage> {
       shape: CircleBorder(),
     );
   }  
-
-  drawIconAdd(){
-    return Column(
-      children: <Widget>[
-        Icon(Icons.person_add, color:Colors.black, size: 30.0,),
-        SizedBox(height: 5.0),
-        Text(
-          'Agregar',
-        ),
-      ],
-    );
-  }
 
 
   Widget drawUser(User user) {
@@ -156,8 +151,8 @@ class _UsersPageState extends State<UsersPage> {
   Widget userImage(String imagePath) {
     return Image(
       image: AssetImage(imagePath),
-      width: 60.0,
-      height: 60.0,
+      width: 100.0,
+      height: 100.0,
     );
   }
 
@@ -169,15 +164,8 @@ class _UsersPageState extends State<UsersPage> {
     );
   }
 
-  Widget showProgress() {
-    if(_showProgress){
-      return CircularProgressIndicator(backgroundColor: Colors.white);
-    }else{
-      return SizedBox(height: 35.0);
-    }
-  }
-
   void _showDialogNew(){
+    var width = MediaQuery.of(context).size.width;
     String nameUser = '';
 
     Alert(
@@ -215,7 +203,7 @@ class _UsersPageState extends State<UsersPage> {
             }, 
             child: Text(
               "GUARDAR",
-              style: TextStyle(color: Colors.white, fontSize: 20),
+              style: TextStyle(color: Colors.white, fontSize: width/28),
             ),
             color: Colors.blue,
           ),
@@ -223,7 +211,7 @@ class _UsersPageState extends State<UsersPage> {
             onPressed: () => Navigator.of(context).pop(),
             child: Text(
               "CERRAR",
-              style: TextStyle(color: Colors.white, fontSize: 20),
+              style: TextStyle(color: Colors.white, fontSize: width/28),
             ),
             color: Colors.red,
           ),
@@ -239,11 +227,7 @@ class _UsersPageState extends State<UsersPage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Icon(Icons.add_a_photo, color:Colors.black, size: 30.0,),
-              SizedBox(height: 5.0),
-              Text(
-                'Agregar',
-              ),
+              image == null? drawIconAdd() : drawuUserImage(image),    
             ],
           ),
         ),
@@ -253,8 +237,34 @@ class _UsersPageState extends State<UsersPage> {
     );
   }
 
+  drawIconAdd(){
+    return Column(
+      children: <Widget>[
+        Icon(Icons.add_a_photo, color:Colors.black, size: 30.0,),
+        SizedBox(height: 5.0),
+        Text(
+          'Agregar',
+        ),
+      ],
+    );
+  }
+
+  drawuUserImage(File image){
+    return Column(
+      children: <Widget>[
+        Image(
+            image: FileImage(image),
+            width: 100.0,
+            height: 100.0,
+          )
+      ],
+    );
+  }
+
+
   void showDialogPicture(){
     
+  var width = MediaQuery.of(context).size.width;
     Alert(
       context: context,
       title: 'Completar acción utilizando',
@@ -270,11 +280,11 @@ class _UsersPageState extends State<UsersPage> {
               Icon(Icons.camera_alt, color: Colors.white),
               Text(
                 "   Camara",
-                style: TextStyle(color: Colors.white, fontSize: 20),
+                style: TextStyle(color: Colors.white, fontSize: width/28),
               ),
             ],
           ),
-          color: Colors.orange,
+        color: Colors.orange,
         ),
         DialogButton(
           onPressed: (){
@@ -288,12 +298,11 @@ class _UsersPageState extends State<UsersPage> {
             Icon(Icons.photo, color: Colors.white),
             Text(
               "   Galeria",
-              style: TextStyle(color: Colors.white, fontSize: 20),
+              style: TextStyle(color: Colors.white, fontSize: width/28),
             ),
           ],
-        ),
-          
-          color: Colors.orange,
+        ), 
+        color: Colors.orange,
         ),
       ]
     ).show();
