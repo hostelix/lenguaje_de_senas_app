@@ -1,12 +1,11 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:lenguaje_de_senas_app/Model/user.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'dataBase.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:toast/toast.dart';
+
 
 Future<List<User>> getUsers() async{
   var dbLenguajeSenas = DBLenguajeSenas();
@@ -19,27 +18,11 @@ class UsersPage extends StatefulWidget {
   _UsersPageState createState() => _UsersPageState();
 }
 
+
 class _UsersPageState extends State<UsersPage> {
   final _formKey = new GlobalKey<FormState>();
 
-
-  File image;
-
-  Future getImage() async{
-    var picture = await ImagePicker.pickImage(source: ImageSource.camera);
-    print(picture);
-    setState(() {
-     image = picture; 
-    });
-  }
-
-  Future getGallery() async{
-    var picture = await ImagePicker.pickImage(source: ImageSource.gallery);
-    print(picture);
-    setState(() {
-     image = picture; 
-    });
-  }
+  String nameUser;
 
   @override
   Widget build(BuildContext context) {
@@ -76,28 +59,31 @@ class _UsersPageState extends State<UsersPage> {
                 FutureBuilder(
                   future: getUsers(),
                   builder: (context, snapshot){
-                    if(snapshot.data == null || snapshot.data.isEmpty)
+                    if(!(snapshot.data == null || snapshot.data.isEmpty))
                     {
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: <Widget>[
-                          GestureDetector(
-                            onTap: () => _showDialogNew(),
-                            child: noUsers(),
-                          ),
-                        ],
+                      return SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: snapshot.data.map<Widget>((user)=>drawUser(user)).toList()
+                          )
                       );
                     }
                     else
                     {
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: snapshot.data.map<Widget>((user)=>drawUser(user)).toList()
-
-                      );
+                      return Row();
                     }
                   },
-                )
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    GestureDetector(
+                      onTap: () => _showDialog(),
+                      child: noUsers(),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -134,7 +120,8 @@ class _UsersPageState extends State<UsersPage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            userImage('${user.urlImageUser}'),
+            //userImage('${user.urlImageUser}'),
+            userImage(user.nameUser),
             SizedBox(height: 5.0),
             Text(
               '${user.nameUser}',
@@ -148,11 +135,15 @@ class _UsersPageState extends State<UsersPage> {
   }
 
 
-  Widget userImage(String imagePath) {
+  Widget userImage(String nameUser) {
+    nameUser = nameUser.toLowerCase();
+    String firstCharacter = nameUser.substring(0, 1);
+    String url = 'assets/users/' + firstCharacter +'.png';
+
     return Image(
-      image: AssetImage(imagePath),
-      width: 100.0,
-      height: 100.0,
+      image: AssetImage(url),
+      width: 80.0,
+      height: 80.0,
     );
   }
 
@@ -164,9 +155,8 @@ class _UsersPageState extends State<UsersPage> {
     );
   }
 
-  void _showDialogNew(){
+  void _showDialog(){
     var width = MediaQuery.of(context).size.width;
-    String nameUser = '';
 
     Alert(
 
@@ -174,19 +164,21 @@ class _UsersPageState extends State<UsersPage> {
         title: "Nuevo Usuario",
         content: Column(
           children: <Widget>[
-            noImage(),
             Form(
               key: _formKey,
               child:TextFormField(
                 inputFormatters: [
-                  WhitelistingTextInputFormatter(RegExp("[a-zA-Z]"))
-                ],
+                  WhitelistingTextInputFormatter(RegExp("[a-zA-Z\ áéíóúÁÉÍÓÚñÑ\s]")),
+                  BlacklistingTextInputFormatter(RegExp("[/\\\\]")),
+                ], 
                 textInputAction: TextInputAction.done,
                 decoration: InputDecoration(
                   icon: Icon(Icons.account_circle),
-                  labelText: 'Nombre y Apellido',
+                  labelText: 'Nombre ',
                 ),
-                validator:(value) => value.isEmpty ? 'Ingrese tu nombre y apellido.':null
+                validator:(value) => value.isEmpty ? 'Ingrese tu nombre.':value.length <2 ? 'El nombre es muy corto' :null,
+                
+                onSaved: (val) => this.nameUser = val,
               ),
             )
             
@@ -195,11 +187,25 @@ class _UsersPageState extends State<UsersPage> {
         buttons: [
           DialogButton(
             onPressed: (){
-              setState(() {
-                if(_formKey.currentState.validate()){
-                  Navigator.of(context).pop(nameUser);
-                } 
-              });
+              if(_formKey.currentState.validate()){
+                _formKey.currentState.save();
+                Navigator.of(context).pop();
+
+                nameUser =  nameUser.toLowerCase();
+                String firstCharacter = nameUser.substring(0, 1);
+                String afterFirstCharacter= nameUser.substring(1, nameUser.length);
+
+                nameUser = firstCharacter.toUpperCase() + afterFirstCharacter;
+
+                var user = User();
+                user.nameUser = nameUser;
+
+                var dbLenguajeSenas = DBLenguajeSenas();
+                dbLenguajeSenas.addNewUser(user);
+                Toast.show("Usuario guardado", context, duration: Toast.LENGTH_LONG, gravity:  Toast.CENTER,
+                    textColor: Colors.white, backgroundColor: Colors.blue);
+              }
+
             }, 
             child: Text(
               "GUARDAR",
@@ -218,94 +224,5 @@ class _UsersPageState extends State<UsersPage> {
         ]).show();
   }
 
-  Card noImage(){
-    return Card(
-      child: GestureDetector(
-        onTap: () => showDialogPicture(),
-        child: Container(
-          padding: EdgeInsets.all(25.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              image == null? drawIconAdd() : drawuUserImage(image),    
-            ],
-          ),
-        ),
-      ),
-      elevation: 5.0,
-      shape: CircleBorder(),
-    );
-  }
 
-  drawIconAdd(){
-    return Column(
-      children: <Widget>[
-        Icon(Icons.add_a_photo, color:Colors.black, size: 30.0,),
-        SizedBox(height: 5.0),
-        Text(
-          'Agregar',
-        ),
-      ],
-    );
-  }
-
-  drawuUserImage(File image){
-    return Column(
-      children: <Widget>[
-        Image(
-            image: FileImage(image),
-            width: 100.0,
-            height: 100.0,
-          )
-      ],
-    );
-  }
-
-
-  void showDialogPicture(){
-    
-  var width = MediaQuery.of(context).size.width;
-    Alert(
-      context: context,
-      title: 'Completar acción utilizando',
-      buttons: [
-        DialogButton(
-          onPressed: (){
-            Navigator.of(context).pop();
-            getImage();
-          }, 
-          child: Row(
-            children: <Widget>[
-              Text("  "),
-              Icon(Icons.camera_alt, color: Colors.white),
-              Text(
-                "   Camara",
-                style: TextStyle(color: Colors.white, fontSize: width/28),
-              ),
-            ],
-          ),
-        color: Colors.orange,
-        ),
-        DialogButton(
-          onPressed: (){
-            Navigator.of(context).pop();
-            getGallery();
-            
-          }, 
-          child: Row(
-          children: <Widget>[
-            Text("  "),
-            Icon(Icons.photo, color: Colors.white),
-            Text(
-              "   Galeria",
-              style: TextStyle(color: Colors.white, fontSize: width/28),
-            ),
-          ],
-        ), 
-        color: Colors.orange,
-        ),
-      ]
-    ).show();
-
-  }
 }

@@ -26,8 +26,10 @@ dependencies:
   sqflite: ^1.1.6
   path_provider: ^0.4.1
   rflutter_alert: ^1.0.3
-  image_picker: ^0.4.4
+  toast: ^0.1.4
+  #image_picker: ^0.4.4
   percent_indicator: "^2.1.1"
+  
 
 dev_dependencies:
   flutter_test:
@@ -41,10 +43,34 @@ dev_dependencies:
 flutter:
   assets:
     - assets/logo.png
-    - assets/activity/family/logo_family.png
     - assets/activity/family/logo_family2.png
-    - assets/users/angel_goitia.jpg
-    - assets/users/elizabeth_guardia.jpg
+    - assets/users/a.png
+    - assets/users/b.png
+    - assets/users/c.png
+    - assets/users/d.png
+    - assets/users/e.png
+    - assets/users/f.png
+    - assets/users/g.png
+    - assets/users/h.png
+    - assets/users/i.png
+    - assets/users/j.png
+    - assets/users/k.png
+    - assets/users/l.png
+    - assets/users/m.png
+    - assets/users/n.png
+    - assets/users/o.png
+    - assets/users/p.png
+    - assets/users/q.png
+    - assets/users/r.png
+    - assets/users/s.png
+    - assets/users/t.png
+    - assets/users/u.png
+    - assets/users/v.png
+    - assets/users/w.png
+    - assets/users/x.png
+    - assets/users/y.png
+    - assets/users/z.png
+
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.

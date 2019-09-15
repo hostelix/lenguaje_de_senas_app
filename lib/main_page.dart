@@ -1,5 +1,14 @@
 import 'package:flutter/material.dart';
+import 'dataBase.dart';
+import 'package:lenguaje_de_senas_app/Model/category.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
+
+
+Future<List<Category>> getCategorys() async{
+  var dbLenguajeSenas = DBLenguajeSenas();
+  Future<List<Category>> categorys = dbLenguajeSenas.getCategorys();
+  return categorys;
+}
 
 class MainPage extends StatefulWidget {
   @override
@@ -10,22 +19,27 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-
-    var isPortrait = MediaQuery.of(context).orientation;
-
+    var width = MediaQuery.of(context).size.width;
 
     return Scaffold(
       body: Stack(
         children: <Widget>[
           ClipPath(
-            clipper: ArcClipper(50.0),
+            clipper: ArcClipper(20.0),
             child: Container(
-              color: Colors.orange,
+              color: Colors.blue,
               height: 200.0,
               padding: EdgeInsets.only(bottom: 40),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.only(top:50),
+                      )
+                    ],
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
@@ -44,19 +58,19 @@ class _MainPageState extends State<MainPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Padding(
-                        padding: EdgeInsets.all(8.0),
+                        padding: EdgeInsets.all(20.0),
                         child: new LinearPercentIndicator(
                           width: MediaQuery.of(context).size.width - 100,
                           lineHeight: 14.0,
                           percent: 0.5,
                           center: Text(
-                            "50.0%",
-                            style: new TextStyle(fontSize: 12.0),
+                            "50%",
+                            style: new TextStyle(fontSize: 12.0,fontWeight: FontWeight.bold),
                           ),
                           trailing: Icon(Icons.grade, color: Colors.yellow,),
                           linearStrokeCap: LinearStrokeCap.roundAll,
                           backgroundColor: Colors.white,
-                          progressColor: Colors.lightBlue,
+                          progressColor: Colors.orange[300],
                         ),
                       ),
                     ],
@@ -65,52 +79,77 @@ class _MainPageState extends State<MainPage> {
               ),
             ),
           ),
-          isPortrait == Orientation.portrait ? gridviewVertical() : gridviewHorizontal(),
+          Padding(
+            padding: EdgeInsets.only(top: 170),
+            child: ListView.builder(
+              itemExtent: 160.0,
+              itemCount: 10,
+              itemBuilder: (BuildContext context, int index){
+                return Card(
+                  elevation: 5,
+                  color: Colors.orange,
+                  child: Container(
+                    height: 50.0,
+                    child: Row(
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.all(5.0),
+                            child: Container(
+                            height: 100.0,
+                            width: 100.0,
+                            decoration: BoxDecoration(
+                              //borderRadius: BorderRadius.all(Radius.circular(5)),
+                              image: DecorationImage(
+                                image: new AssetImage('assets/activity/family/logo_family.png'),
+                              )
+                            ),
+                          ),
+                        ),
+                        Container(
+                          height: 100,
+                          child: Padding(
+                            padding: EdgeInsets.fromLTRB(20, 5, 0, 0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Padding(
+                                  padding: EdgeInsets.only(left: 5),
+                                  child: Text('Categoria 1', style: TextStyle(fontSize: 18, fontFamily: 'RobotoMono', color: Colors.white, fontWeight: FontWeight.bold)),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.fromLTRB(0, 30, 0, 3),
+                                  child: Container(
+                                    child: new LinearPercentIndicator(
+                                      width: width-160,
+                                      lineHeight: 14.0,
+                                      percent: 0.5,// 0.5 = 50%
+                                      center: Text(
+                                        "50%",
+                                        style: new TextStyle(fontSize: 12.0,fontWeight: FontWeight.bold),
+                                      ),
+                                      linearStrokeCap: LinearStrokeCap.roundAll,
+                                      backgroundColor: Colors.white,
+                                      progressColor: Colors.blue[300],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          )
         ],
       ),
     );
 
   }
 
-  gridviewVertical(){
-    return Padding(
-      padding: EdgeInsets.only(top: 150.0),
-      child: GridView.count(
-        crossAxisCount: 2,
-        childAspectRatio: 1.0,
-        mainAxisSpacing: 5.0,
-        children: List.generate(6, (index){
-          return Card(
-            child: Container(
-              alignment: Alignment.center,
-              color: Colors.blue [100 * (index % 9)],
-              child: Text('$index'),
-            ),
-          );
-        })
-      )
-    );
-  }
-
-  gridviewHorizontal(){
-    return Padding(
-      padding: EdgeInsets.only(top:150.0),
-      child: GridView.count(
-        crossAxisCount: 3,
-        childAspectRatio: 1.0,
-        mainAxisSpacing: 10.0,
-        children: List.generate(6, (index){
-          return Card(
-            child: Container(
-              alignment: Alignment.center,
-              color: Colors.blue [100 * (index % 9)],
-              child: Text('$index'),
-            ),
-          );
-        })
-      )
-    );
-  }
 }
 
 class ArcClipper extends CustomClipper<Path> {

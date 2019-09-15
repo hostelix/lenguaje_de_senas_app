@@ -1,7 +1,7 @@
 
 class User{
   int idUser;
-  String nameUser, urlImageUser;
+  String nameUser;
 
   User();
 }
