@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:lenguaje_de_senas_app/Model/user.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'dataBase.dart';
@@ -10,7 +11,9 @@ import 'package:toast/toast.dart';
 Future<List<User>> getUsers() async{
   var dbLenguajeSenas = DBLenguajeSenas();
   Future<List<User>> users = dbLenguajeSenas.getUsers();
+
   return users;
+
 }
 
 class UsersPage extends StatefulWidget {
@@ -18,14 +21,31 @@ class UsersPage extends StatefulWidget {
   _UsersPageState createState() => _UsersPageState();
 }
 
-
 class _UsersPageState extends State<UsersPage> {
   final _formKey = new GlobalKey<FormState>();
 
   String nameUser;
 
   //status Botton flotante
-  bool _statusBotton = false;
+  bool _statusButton = false;
+  String _statusAction = '';
+
+  @override
+  void initState() {
+    super.initState();
+
+    verifyDBUsers();
+  }
+
+  verifyDBUsers() async {
+    final val = await getUsers();
+    // length table users
+    if(val.length > 0){
+      setState(() {
+        _statusButton = true;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +84,7 @@ class _UsersPageState extends State<UsersPage> {
                   builder: (context, snapshot){
                     if(!(snapshot.data == null || snapshot.data.isEmpty))
                     {
-                        _statusBotton = true;
+                      _statusButton =  true;
 
                       return SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
@@ -76,7 +96,7 @@ class _UsersPageState extends State<UsersPage> {
                     }
                     else
                     {
-                      _statusBotton = false;
+                      _statusButton = false;
                       return Row();
                     }
                   },
@@ -95,14 +115,27 @@ class _UsersPageState extends State<UsersPage> {
           ),
         )
       ),
-        floatingActionButton: new Visibility(
-          visible: _statusBotton,
-          child: new FloatingActionButton(
-            onPressed: (){},
-            tooltip: 'Evento ',
-            child: new Icon(Icons.settings,color: Colors.white,),
-          ),
+      floatingActionButton: new Visibility(
+        visible: _statusButton,
+        child: SpeedDial(
+          animatedIcon: AnimatedIcons.menu_close,
+          foregroundColor: Colors.white,
+          overlayOpacity: 0.2,
+          children: [
+            SpeedDialChild(
+                child: Icon(Icons.delete, color: Colors.white,),
+                label: "Eliminar Usuario",
+                backgroundColor: Colors.red,
+                onTap: () => print('eliminar'),//_buttonAction('delete',0, ''),
+            ),
+            SpeedDialChild(
+                child: Icon(Icons.edit, color: Colors.white,),
+                label: "Modificar Usuario",
+                onTap: () => _buttonAction('modify',0, ''),
+            ),
+          ],
         ),
+      ),
     );
   }
 
@@ -131,16 +164,19 @@ class _UsersPageState extends State<UsersPage> {
     return Card(
       child: Container(
         padding: EdgeInsets.all(25.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            //userImage('${user.urlImageUser}'),
-            userImage(user.nameUser),
-            SizedBox(height: 5.0),
-            Text(
-              '${user.nameUser}',
-            ),
-          ],
+        child: GestureDetector(
+          onTap: () => _buttonAction('login',user.idUser,user.nameUser),
+          child:Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              //userImage('${user.urlImageUser}'),
+              userImage(user.nameUser),
+              SizedBox(height: 5.0),
+              Text(
+                '${user.nameUser}',
+              ),
+            ],
+          ),
         ),
       ),
       elevation: 5.0,
@@ -219,14 +255,127 @@ class _UsersPageState extends State<UsersPage> {
                 Toast.show("Usuario guardado", context, duration: Toast.LENGTH_LONG, gravity:  Toast.CENTER,
                     textColor: Colors.white, backgroundColor: Colors.blue);
 
-                setState(() {
-                  _statusBotton = true;
-                });
+                _statusButton =  true;
               }
 
             }, 
             child: Text(
               "GUARDAR",
+              style: TextStyle(color: Colors.white, fontSize: width/28),
+            ),
+            color: Colors.blue,
+          ),
+          DialogButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(
+              "CERRAR",
+              style: TextStyle(color: Colors.white, fontSize: width/28),
+            ),
+            color: Colors.red,
+          ),
+        ]).show();
+  }
+
+  _buttonAction(String status, int id, String name){
+
+    print('-------------------------');
+    print(status);
+    print(id);
+    print(name);
+
+    if(id == 0){
+      Toast.show(
+        "Seleccionar Usuario...",
+        context,
+        duration: Toast.LENGTH_LONG,
+        gravity:  Toast.BOTTOM,
+        textColor: Colors.white,
+        backgroundColor: Colors.blue
+      );
+
+      _statusAction = status;
+    }
+    else
+    {
+      switch (_statusAction) {
+      case 'delete':
+          break;
+        
+        case 'modify':
+          _showDialogModify(id, name);
+          break;
+        
+        case 'cancel':
+          _statusAction = '';
+          break;
+        
+        case 'login':
+          break;
+      }
+    }
+
+  }
+
+  void _showDialogModify(int id, String name){
+    var width = MediaQuery.of(context).size.width;
+
+    Alert(
+
+        context: context,
+        title: "Modificar Usuario",
+        content: Column(
+          children: <Widget>[
+            Form(
+              key: _formKey,
+              child:TextFormField(
+                inputFormatters: [
+                  WhitelistingTextInputFormatter(RegExp("[a-zA-Z\ áéíóúÁÉÍÓÚñÑ\s]")),
+                  BlacklistingTextInputFormatter(RegExp("[/\\\\]")),
+                ], 
+                textInputAction: TextInputAction.done,
+                autofocus: true,
+                decoration: InputDecoration(
+                  icon: Icon(Icons.account_circle),
+                  labelText: 'Nombre ',
+                  hintText: name, 
+                ),
+                validator:(value) => value.isEmpty ? 'Ingrese tu nombre.':value.length <2 ? 'El nombre es muy corto' :null,
+                
+                onSaved: (val) => this.nameUser = val,
+              ),
+            )
+            
+          ],
+        ),
+        buttons: [
+          DialogButton(
+            onPressed: (){
+              if(_formKey.currentState.validate()){
+                _formKey.currentState.save();
+                Navigator.of(context).pop();
+
+                name =  name.toLowerCase();
+                String firstCharacter = name.substring(0, 1);
+                String afterFirstCharacter= name.substring(1, name.length);
+
+                name = firstCharacter.toUpperCase() + afterFirstCharacter;
+
+                var user = User();
+                user.idUser = id;
+                user.nameUser = name;
+
+                var dbLenguajeSenas = DBLenguajeSenas();
+                dbLenguajeSenas.updateUser(user);
+                Toast.show("Usuario actualizado", context, duration: Toast.LENGTH_LONG, gravity:  Toast.CENTER,
+                    textColor: Colors.white, backgroundColor: Colors.blue);
+                
+                _statusAction = '';
+
+              }
+
+            }, 
+            child: Text(
+              "ACTUALIZAR",
               style: TextStyle(color: Colors.white, fontSize: width/28),
             ),
             color: Colors.blue,

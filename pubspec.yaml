@@ -29,6 +29,7 @@ dependencies:
   toast: ^0.1.4
   #image_picker: ^0.4.4
   percent_indicator: "^2.1.1"
+  flutter_speed_dial: ^1.2.1
   
 
 dev_dependencies:
@@ -42,34 +43,12 @@ dev_dependencies:
 # The following section is specific to Flutter.
 flutter:
   assets:
-    - assets/logo.png
-    - assets/activity/family/logo_family2.png
-    - assets/users/a.png
-    - assets/users/b.png
-    - assets/users/c.png
-    - assets/users/d.png
-    - assets/users/e.png
-    - assets/users/f.png
-    - assets/users/g.png
-    - assets/users/h.png
-    - assets/users/i.png
-    - assets/users/j.png
-    - assets/users/k.png
-    - assets/users/l.png
-    - assets/users/m.png
-    - assets/users/n.png
-    - assets/users/o.png
-    - assets/users/p.png
-    - assets/users/q.png
-    - assets/users/r.png
-    - assets/users/s.png
-    - assets/users/t.png
-    - assets/users/u.png
-    - assets/users/v.png
-    - assets/users/w.png
-    - assets/users/x.png
-    - assets/users/y.png
-    - assets/users/z.png
+    - assets/
+    - assets/activity/family/
+    - assets/activity/aliments/
+    - assets/activity/numbers/
+    - assets/activity/colors/
+    - assets/users/
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
