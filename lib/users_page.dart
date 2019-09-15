@@ -24,6 +24,9 @@ class _UsersPageState extends State<UsersPage> {
 
   String nameUser;
 
+  //status Botton flotante
+  bool _statusBotton = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,6 +64,8 @@ class _UsersPageState extends State<UsersPage> {
                   builder: (context, snapshot){
                     if(!(snapshot.data == null || snapshot.data.isEmpty))
                     {
+                        _statusBotton = true;
+
                       return SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: Row(
@@ -71,6 +76,7 @@ class _UsersPageState extends State<UsersPage> {
                     }
                     else
                     {
+                      _statusBotton = false;
                       return Row();
                     }
                   },
@@ -89,6 +95,14 @@ class _UsersPageState extends State<UsersPage> {
           ),
         )
       ),
+        floatingActionButton: new Visibility(
+          visible: _statusBotton,
+          child: new FloatingActionButton(
+            onPressed: (){},
+            tooltip: 'Evento ',
+            child: new Icon(Icons.settings,color: Colors.white,),
+          ),
+        ),
     );
   }
 
@@ -204,6 +218,10 @@ class _UsersPageState extends State<UsersPage> {
                 dbLenguajeSenas.addNewUser(user);
                 Toast.show("Usuario guardado", context, duration: Toast.LENGTH_LONG, gravity:  Toast.CENTER,
                     textColor: Colors.white, backgroundColor: Colors.blue);
+
+                setState(() {
+                  _statusBotton = true;
+                });
               }
 
             }, 
