@@ -126,7 +126,7 @@ class _UsersPageState extends State<UsersPage> {
                 child: Icon(Icons.delete, color: Colors.white,),
                 label: "Eliminar Usuario",
                 backgroundColor: Colors.red,
-                onTap: () => print('eliminar'),//_buttonAction('delete',0, ''),
+                onTap: () => _buttonAction('delete',0, ''),
             ),
             SpeedDialChild(
                 child: Icon(Icons.edit, color: Colors.white,),
@@ -252,7 +252,7 @@ class _UsersPageState extends State<UsersPage> {
 
                 var dbLenguajeSenas = DBLenguajeSenas();
                 dbLenguajeSenas.addNewUser(user);
-                Toast.show("Usuario guardado", context, duration: Toast.LENGTH_LONG, gravity:  Toast.CENTER,
+                Toast.show("Usuario Guardado", context, duration: Toast.LENGTH_LONG, gravity:  Toast.CENTER,
                     textColor: Colors.white, backgroundColor: Colors.blue);
 
                 _statusButton =  true;
@@ -278,14 +278,9 @@ class _UsersPageState extends State<UsersPage> {
 
   _buttonAction(String status, int id, String name){
 
-    print('-------------------------');
-    print(status);
-    print(id);
-    print(name);
-
     if(id == 0){
       Toast.show(
-        "Seleccionar Usuario...",
+        "Seleccionar un Usuario...",
         context,
         duration: Toast.LENGTH_LONG,
         gravity:  Toast.BOTTOM,
@@ -298,7 +293,8 @@ class _UsersPageState extends State<UsersPage> {
     else
     {
       switch (_statusAction) {
-      case 'delete':
+        case 'delete':
+          _showDialogDeleteUser(id, name);
           break;
         
         case 'modify':
@@ -336,9 +332,9 @@ class _UsersPageState extends State<UsersPage> {
                 autofocus: true,
                 decoration: InputDecoration(
                   icon: Icon(Icons.account_circle),
-                  labelText: 'Nombre ',
-                  hintText: name, 
+                  labelText: 'Nombre ', 
                 ),
+                initialValue: name,
                 validator:(value) => value.isEmpty ? 'Ingrese tu nombre.':value.length <2 ? 'El nombre es muy corto' :null,
                 
                 onSaved: (val) => this.nameUser = val,
@@ -354,7 +350,7 @@ class _UsersPageState extends State<UsersPage> {
                 _formKey.currentState.save();
                 Navigator.of(context).pop();
 
-                name =  name.toLowerCase();
+                name = nameUser.toLowerCase();
                 String firstCharacter = name.substring(0, 1);
                 String afterFirstCharacter= name.substring(1, name.length);
 
@@ -366,10 +362,14 @@ class _UsersPageState extends State<UsersPage> {
 
                 var dbLenguajeSenas = DBLenguajeSenas();
                 dbLenguajeSenas.updateUser(user);
-                Toast.show("Usuario actualizado", context, duration: Toast.LENGTH_LONG, gravity:  Toast.CENTER,
+                Toast.show("Usuario Actualizado", context, duration: Toast.LENGTH_LONG, gravity:  Toast.CENTER,
                     textColor: Colors.white, backgroundColor: Colors.blue);
                 
                 _statusAction = '';
+
+                setState(() {
+                  getUsers(); 
+                });
 
               }
 
@@ -391,5 +391,73 @@ class _UsersPageState extends State<UsersPage> {
         ]).show();
   }
 
+
+  void _showDialogDeleteUser(int id, String name){
+    var width = MediaQuery.of(context).size.width;
+
+    Alert(
+
+        context: context,
+        title: "¿Esta seguro que desea eliminar este usuario?",
+        content: Column(
+          children: <Widget>[
+            Card(
+              child: Container(
+                padding: EdgeInsets.all(25.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    //userImage('${user.urlImageUser}'),
+                    userImage(name),
+                    SizedBox(height: 5.0),
+                    Text(
+                      name,
+                    ),
+                  ],
+                ),
+              ),
+              elevation: 5.0,
+              shape: CircleBorder(),
+            ),
+            
+          ],
+        ),
+        buttons: [
+          DialogButton(
+            onPressed: (){
+                Navigator.of(context).pop(),
+
+                var user = User();
+                user.idUser = id;
+
+                var dbLenguajeSenas = DBLenguajeSenas();
+                dbLenguajeSenas.deleteUser(user);
+
+                Toast.show("Usuario Eliminado", context, duration: Toast.LENGTH_LONG, gravity:  Toast.CENTER,
+                    textColor: Colors.white, backgroundColor: Colors.blue);
+                
+                _statusAction = '';
+
+                setState(() {
+                  getUsers(); 
+                });
+
+            }, 
+            child: Text(
+              "CONFIRMAR",
+              style: TextStyle(color: Colors.white, fontSize: width/28),
+            ),
+            color: Colors.blue,
+          ),
+          DialogButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(
+              "CANCELAR",
+              style: TextStyle(color: Colors.white, fontSize: width/28),
+            ),
+            color: Colors.red,
+          ),
+        ]).show();
+  }
 
 }
