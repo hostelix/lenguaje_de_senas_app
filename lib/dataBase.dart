@@ -123,26 +123,24 @@ class DBLenguajeSenas{
       },
       {
         "nameCategory" : "Alimentos",
-        "urlCategory"  : "assets/activity/aliments/logo_aliments2.png"
+        "urlCategory"  : "assets/activity/aliments/logo_aliments2.jpg"
       },
       {
         "nameCategory" : "Animales",
-        "urlCategory"  : "assets/activity/animals/logo_animals2.png"
+        "urlCategory"  : "assets/activity/animals/logo_animals2.jpg"
       },
       {
         "nameCategory" : "Numeros",
-        "urlCategory"  : "assets/activity/numbers/logo_numbers.png"
+        "urlCategory"  : "assets/activity/numbers/logo_numbers.jpg"
       },
       {
         "nameCategory" : "Colores",
-        "urlCategory"  : "assets/activity/colors/logo_colors2.png"
+        "urlCategory"  : "assets/activity/colors/logo_colors2.jpg"
       },
     ];
 
-  
-
     var dbConnection = await db;
-    String query = 'INSERT INTO Categorys (nameCategorys, urlCategorys) VALUES (Familia, ass), (Alimentos), (Animales), (Colores), (Numeros)';
+    String query = 'INSERT INTO Categorys (nameCategorys, urlCategorys) VALUES (\'${category[0]['nameCategory']}\',\'${category[0]['urlCategory']}\'),(\'${category[1]['nameCategory']}\',\'${category[1]['urlCategory']}\'),(\'${category[2]['nameCategory']}\',\'${category[2]['urlCategory']}\'),(\'${category[3]['nameCategory']}\',\'${category[3]['urlCategory']}\'),(\'${category[4]['nameCategory']}\',\'${category[4]['urlCategory']}\')';
     await dbConnection.transaction((transaction) async{
       return await transaction.rawInsert(query);
     });

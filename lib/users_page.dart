@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:lenguaje_de_senas_app/Model/user.dart';
+import 'package:lenguaje_de_senas_app/main_page.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'dataBase.dart';
 import 'dart:async';
@@ -278,6 +279,11 @@ class _UsersPageState extends State<UsersPage> {
 
   _buttonAction(String status, int id, String name){
 
+    if(_statusAction == ''){
+      _statusAction = status;
+    }
+
+
     if(id == 0){
       Toast.show(
         "Seleccionar un Usuario...",
@@ -292,6 +298,7 @@ class _UsersPageState extends State<UsersPage> {
     }
     else
     {
+
       switch (_statusAction) {
         case 'delete':
           _showDialogDeleteUser(id, name);
@@ -306,6 +313,7 @@ class _UsersPageState extends State<UsersPage> {
           break;
         
         case 'login':
+          Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => new MainPage(id, name)));
           break;
       }
     }
@@ -425,7 +433,7 @@ class _UsersPageState extends State<UsersPage> {
         buttons: [
           DialogButton(
             onPressed: (){
-                Navigator.of(context).pop(),
+                Navigator.of(context).pop();
 
                 var user = User();
                 user.idUser = id;

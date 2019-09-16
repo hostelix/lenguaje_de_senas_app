@@ -48,6 +48,7 @@ flutter:
     - assets/activity/aliments/
     - assets/activity/numbers/
     - assets/activity/colors/
+    - assets/activity/animals/
     - assets/users/
 
   # The following line ensures that the Material Icons font is

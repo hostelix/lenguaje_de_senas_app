@@ -10,12 +10,42 @@ Future<List<Category>> getCategorys() async{
   return categorys;
 }
 
+
 class MainPage extends StatefulWidget {
+  MainPage(this.idUserLogin, this.nameUserLogin);
+  final int idUserLogin;
+  final String nameUserLogin;
+
   @override
-  _MainPageState createState() => _MainPageState();
+  _MainPageState createState() => _MainPageState(idUserLogin, nameUserLogin);
 }
 
 class _MainPageState extends State<MainPage> {
+  _MainPageState(this.idUserLogin, this.nameUserLogin);
+  final int idUserLogin;
+  final String nameUserLogin;
+
+  @override
+  void initState() {
+    super.initState();
+
+    verifyCategory();
+  }
+
+  void verifyCategory() async{
+    final val = await getCategorys();
+    if (val.length == 0) {
+      print('entro');
+      var dbLenguajeSenas = DBLenguajeSenas();
+      dbLenguajeSenas.addCategory();
+
+      setState(() {
+        getCategorys();
+      });
+    }
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -81,69 +111,80 @@ class _MainPageState extends State<MainPage> {
           ),
           Padding(
             padding: EdgeInsets.only(top: 170),
-            child: ListView.builder(
-              itemExtent: 160.0,
-              itemCount: 10,
-              itemBuilder: (BuildContext context, int index){
-                return Card(
-                  elevation: 5,
-                  color: Colors.orange,
-                  child: Container(
-                    height: 50.0,
-                    child: Row(
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.all(5.0),
-                            child: Container(
-                            height: 100.0,
-                            width: 100.0,
-                            decoration: BoxDecoration(
-                              //borderRadius: BorderRadius.all(Radius.circular(5)),
-                              image: DecorationImage(
-                                image: new AssetImage('assets/activity/family/logo_family.png'),
-                              )
-                            ),
-                          ),
-                        ),
-                        Container(
-                          height: 100,
-                          child: Padding(
-                            padding: EdgeInsets.fromLTRB(20, 5, 0, 0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
+            child: FutureBuilder<List<Category>>(
+              future: getCategorys(),
+              builder: (context, snapshot){
+                if ((snapshot.data != null) && (snapshot.hasData))
+                  {
+                    return ListView.builder(
+                        itemExtent: 160.0,
+                        itemCount: snapshot.data.length,
+                        itemBuilder: (BuildContext context, int index){
+                        return Card(
+                          elevation: 5,
+                          color: Colors.orange,
+                          child: Container(
+                            height: 50.0,
+                            child: Row(
                               children: <Widget>[
                                 Padding(
-                                  padding: EdgeInsets.only(left: 5),
-                                  child: Text('Categoria 1', style: TextStyle(fontSize: 18, fontFamily: 'RobotoMono', color: Colors.white, fontWeight: FontWeight.bold)),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.fromLTRB(0, 30, 0, 3),
+                                  padding: EdgeInsets.all(5.0),
                                   child: Container(
-                                    child: new LinearPercentIndicator(
-                                      width: width-160,
-                                      lineHeight: 14.0,
-                                      percent: 0.5,// 0.5 = 50%
-                                      center: Text(
-                                        "50%",
-                                        style: new TextStyle(fontSize: 12.0,fontWeight: FontWeight.bold),
-                                      ),
-                                      linearStrokeCap: LinearStrokeCap.roundAll,
-                                      backgroundColor: Colors.white,
-                                      progressColor: Colors.blue[300],
+                                    height: 100.0,
+                                    width: 100.0,
+                                    decoration: BoxDecoration(
+                                      //borderRadius: BorderRadius.all(Radius.circular(5)),
+                                        image: DecorationImage(
+                                          image: new AssetImage(snapshot.data[index].urlCategory),
+                                        )
                                     ),
                                   ),
                                 ),
+                                Container(
+                                  height: 100,
+                                  child: Padding(
+                                    padding: EdgeInsets.fromLTRB(20, 5, 0, 0),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: <Widget>[
+                                        Padding(
+                                          padding: EdgeInsets.only(left: 5),
+                                          child: Text(snapshot.data[index].nameCategory, style: TextStyle(fontSize: 18, fontFamily: 'RobotoMono', color: Colors.white, fontWeight: FontWeight.bold)),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.fromLTRB(0, 30, 0, 3),
+                                          child: Container(
+                                            child: new LinearPercentIndicator(
+                                              width: width-160,
+                                              lineHeight: 14.0,
+                                              percent: 0.5,// 0.5 = 50%
+                                              center: Text(
+                                                "50%",
+                                                style: new TextStyle(fontSize: 12.0,fontWeight: FontWeight.bold),
+                                              ),
+                                              linearStrokeCap: LinearStrokeCap.roundAll,
+                                              backgroundColor: Colors.white,
+                                              progressColor: Colors.blue[300],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                )
                               ],
                             ),
                           ),
-                        )
-                      ],
-                    ),
-                  ),
-                );
+                        );
+                      });
+                  }
+                    return new Container(
+                      alignment: AlignmentDirectional.center,
+                      child: new CircularProgressIndicator(),
+                    );
               },
             ),
-          )
+          ),
         ],
       ),
     );

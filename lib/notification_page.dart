@@ -8,6 +8,7 @@ class NotificationPage extends StatefulWidget {
 }
 
 class _NotificationPageState extends State<NotificationPage> {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,35 +57,6 @@ class _NotificationPageState extends State<NotificationPage> {
           style: TextStyle(fontSize:width/20 , color: Colors.white),
         ),
       );
-
-  /*     final labelName = Padding(
-        padding: EdgeInsets.all(8.0),
-        child: Text(
-          'Por Favor Ingrese tu Nombre y Apellido:',
-          style: TextStyle(fontSize:16.0, color: Colors.white),
-        ),
-      );
-
-      final formName = TextFormField(
-        keyboardType: TextInputType.text,
-        autofocus: false,
-        initialValue: '',
-        decoration: InputDecoration(
-          fillColor: Colors.white,
-          filled: true,
-          hintText: 'Nombre y Apellido',
-          contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(5.0)),
-            borderSide: BorderSide(color: Colors.white)
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.white, width: 5.0),
-          ),
-        ),
-          
-      ); */
-
 
       final enterButton = Padding(
         padding: EdgeInsets.all(18.0),
@@ -173,34 +145,6 @@ class _NotificationPageState extends State<NotificationPage> {
           style: TextStyle(fontSize:width/35 , color: Colors.white),
         ),
       );
-
-  /*     final labelName = Padding(
-        padding: EdgeInsets.all(8.0),
-        child: Text(
-          'Por Favor Ingrese tu Nombre y Apellido:',
-          style: TextStyle(fontSize:16.0, color: Colors.white),
-        ),
-      );
-
-      final formName = TextFormField(
-        keyboardType: TextInputType.text,
-        autofocus: false,
-        initialValue: '',
-        decoration: InputDecoration(
-          fillColor: Colors.white,
-          filled: true,
-          hintText: 'Nombre y Apellido',
-          contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(5.0)),
-            borderSide: BorderSide(color: Colors.white)
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.white, width: 5.0),
-          ),
-        ),
-          
-      ); */
 
 
       final enterButton = Padding(
