@@ -45,96 +45,121 @@ class _UsersPageState extends State<UsersPage> {
       setState(() {
         _statusButton = true;
       });
+    }else{
+      setState(() {
+        _statusButton = false;
+      });
     }
+  }
+
+  Future<bool> _onBackPressed(){
+    return showDialog(
+      context: context,
+      builder: (context)=> AlertDialog(
+        title: Text('¿Desea salir de la aplicación?'),
+        actions: <Widget>[
+          FlatButton(
+            child: Text('Si'),
+            onPressed: () => Navigator.pop(context,true),
+          ),
+          FlatButton(
+            child: Text('No'),
+            onPressed: () => Navigator.pop(context,false),
+          )
+        ],
+      )
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      
-      backgroundColor: Colors.orange,
-      appBar: AppBar(
-        backgroundColor: Colors.blue,
-        title:new Center(
-          child: new Text("Usuario", textAlign: TextAlign.center,style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-        ),
-      ),
-      body:SingleChildScrollView(
-        child:  Padding(
-          padding: EdgeInsets.all(30.0),
-          child: Container(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                logo(),
-                SizedBox(height: 30.0),
-                Text(
-                  "Seleccionar Usuario:",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 28.0,
-                    fontFamily: "Roboto",
-                    color: Colors.white,
-                    fontWeight: FontWeight.w300,
-                  ),
-                ),
-                SizedBox(height: 15.0),
-                FutureBuilder(
-                  future: getUsers(),
-                  builder: (context, snapshot){
-                    if(!(snapshot.data == null || snapshot.data.isEmpty))
-                    {
-                      _statusButton =  true;
-
-                      return SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: snapshot.data.map<Widget>((user)=>drawUser(user)).toList()
-                          )
-                      );
-                    }
-                    else
-                    {
-                      _statusButton = false;
-                      return Row();
-                    }
-                  },
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: <Widget>[
-                    GestureDetector(
-                      onTap: () => _showDialog(),
-                      child: noUsers(),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+    return WillPopScope(
+      onWillPop: _onBackPressed,
+      child: Scaffold( 
+        backgroundColor: Colors.orange,
+        appBar: AppBar(
+          backgroundColor: Colors.blue,
+          title:new Center(
+            child: new Text("Usuario", textAlign: TextAlign.center,style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
           ),
-        )
-      ),
-      floatingActionButton: new Visibility(
-        visible: _statusButton,
-        child: SpeedDial(
-          animatedIcon: AnimatedIcons.menu_close,
-          foregroundColor: Colors.white,
-          overlayOpacity: 0.2,
-          children: [
-            SpeedDialChild(
-                child: Icon(Icons.delete, color: Colors.white,),
-                label: "Eliminar Usuario",
-                backgroundColor: Colors.red,
-                onTap: () => _buttonAction('delete',0, ''),
+        ),
+        body:SingleChildScrollView(
+          child:  Padding(
+            padding: EdgeInsets.all(30.0),
+            child: Container(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  logo(),
+                  SizedBox(height: 30.0),
+                  Text(
+                    "Seleccionar Usuario:",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 28.0,
+                      fontFamily: "Roboto",
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 15.0),
+                  FutureBuilder(
+                    future: getUsers(),
+                    builder: (context, snapshot){
+                      if(!(snapshot.data == null || snapshot.data.isEmpty))
+                      {
+                        _statusButton =  true;
+
+                        return SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                children: snapshot.data.map<Widget>((user)=>drawUser(user)).toList()
+                            )
+                        );
+                      }
+                      else
+                      {
+                        _statusButton = false;
+                        return Row();
+                      }
+                    },
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      GestureDetector(
+                        onTap: () => _showDialog(),
+                        child: noUsers(),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-            SpeedDialChild(
-                child: Icon(Icons.edit, color: Colors.white,),
-                label: "Modificar Usuario",
-                onTap: () => _buttonAction('modify',0, ''),
-            ),
-          ],
+          )
+        ),
+        floatingActionButton: new Visibility(
+          visible: _statusButton,
+          child: SpeedDial(
+            animatedIcon: AnimatedIcons.menu_close,
+            foregroundColor: Colors.white,
+            overlayOpacity: 0.2,
+            children: [
+              SpeedDialChild(
+                  child: Icon(Icons.delete, color: Colors.white,),
+                  label: "Eliminar Usuario",
+                  backgroundColor: Colors.red,
+                  onTap: () => _buttonAction('delete',0, ''),
+              ),
+              SpeedDialChild(
+                  child: Icon(Icons.edit, color: Colors.white,),
+                  label: "Modificar Usuario",
+                  onTap: () => _buttonAction('modify',0, ''),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -256,7 +281,10 @@ class _UsersPageState extends State<UsersPage> {
                 Toast.show("Usuario Guardado", context, duration: Toast.LENGTH_LONG, gravity:  Toast.CENTER,
                     textColor: Colors.white, backgroundColor: Colors.blue);
 
-                _statusButton =  true;
+                setState(() {
+                  getUsers();
+                  verifyDBUsers();
+                });
               }
 
             }, 
@@ -377,7 +405,9 @@ class _UsersPageState extends State<UsersPage> {
 
                 setState(() {
                   getUsers(); 
+                  verifyDBUsers();
                 });
+                
 
               }
 
@@ -448,7 +478,9 @@ class _UsersPageState extends State<UsersPage> {
 
                 setState(() {
                   getUsers(); 
+                  verifyDBUsers();
                 });
+
 
             }, 
             child: Text(

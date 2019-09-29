@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'dataBase.dart';
 import 'package:lenguaje_de_senas_app/Model/category.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
+import 'users_page.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
+import 'learn_page.dart';
 
 
 Future<List<Category>> getCategorys() async{
@@ -35,9 +38,9 @@ class _MainPageState extends State<MainPage> {
   void verifyCategory() async{
     final val = await getCategorys();
     if (val.length == 0) {
-      print('entro');
       var dbLenguajeSenas = DBLenguajeSenas();
       dbLenguajeSenas.addCategory();
+      dbLenguajeSenas.addDetailCategory();
 
       setState(() {
         getCategorys();
@@ -52,6 +55,11 @@ class _MainPageState extends State<MainPage> {
     var width = MediaQuery.of(context).size.width;
 
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.exit_to_app),
+        foregroundColor: Colors.white,
+        onPressed: () =>Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => UsersPage())),
+      ),
       body: Stack(
         children: <Widget>[
           ClipPath(
@@ -123,65 +131,68 @@ class _MainPageState extends State<MainPage> {
                         return Card(
                           elevation: 5,
                           color: Colors.orange,
-                          child: Container(
-                            height: 50.0,
-                            child: Row(
-                              children: <Widget>[
-                                Padding(
-                                  padding: EdgeInsets.all(5.0),
-                                  child: Container(
-                                    height: 100.0,
-                                    width: 100.0,
-                                    decoration: BoxDecoration(
-                                      //borderRadius: BorderRadius.all(Radius.circular(5)),
-                                        image: DecorationImage(
-                                          image: new AssetImage(snapshot.data[index].urlCategory),
-                                        )
+                          child:  GestureDetector(
+                            onTap: () => showDialogDetailsCategory(snapshot.data[index].idCategory, snapshot.data[index].nameCategory, snapshot.data[index].urlCategory),
+                            child: Container(
+                              height: 50.0,
+                              child: Row(
+                                children: <Widget>[
+                                  Padding(
+                                    padding: EdgeInsets.all(5.0),
+                                    child: Container(
+                                      height: 100.0,
+                                      width: 100.0,
+                                      decoration: BoxDecoration(
+                                        //borderRadius: BorderRadius.all(Radius.circular(5)),
+                                          image: DecorationImage(
+                                            image: new AssetImage(snapshot.data[index].urlCategory),
+                                          )
+                                      ),
                                     ),
                                   ),
-                                ),
-                                Container(
-                                  height: 100,
-                                  child: Padding(
-                                    padding: EdgeInsets.fromLTRB(20, 5, 0, 0),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: <Widget>[
-                                        Padding(
-                                          padding: EdgeInsets.only(left: 5),
-                                          child: Text(snapshot.data[index].nameCategory, style: TextStyle(fontSize: 18, fontFamily: 'RobotoMono', color: Colors.white, fontWeight: FontWeight.bold)),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.fromLTRB(0, 30, 0, 3),
-                                          child: Container(
-                                            child: new LinearPercentIndicator(
-                                              width: width-160,
-                                              lineHeight: 14.0,
-                                              percent: 0.5,// 0.5 = 50%
-                                              center: Text(
-                                                "50%",
-                                                style: new TextStyle(fontSize: 12.0,fontWeight: FontWeight.bold),
+                                  Container(
+                                    height: 100,
+                                    child: Padding(
+                                      padding: EdgeInsets.fromLTRB(20, 5, 0, 0),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: <Widget>[
+                                          Padding(
+                                            padding: EdgeInsets.only(left: 5),
+                                            child: Text(snapshot.data[index].nameCategory, style: TextStyle(fontSize: 18, fontFamily: 'RobotoMono', color: Colors.white, fontWeight: FontWeight.bold)),
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.fromLTRB(0, 30, 0, 3),
+                                            child: Container(
+                                              child: new LinearPercentIndicator(
+                                                width: width-160,
+                                                lineHeight: 14.0,
+                                                percent: 0.5,// 0.5 = 50%
+                                                center: Text(
+                                                  "50%",
+                                                  style: new TextStyle(fontSize: 12.0,fontWeight: FontWeight.bold),
+                                                ),
+                                                linearStrokeCap: LinearStrokeCap.roundAll,
+                                                backgroundColor: Colors.white,
+                                                progressColor: Colors.blue[300],
                                               ),
-                                              linearStrokeCap: LinearStrokeCap.roundAll,
-                                              backgroundColor: Colors.white,
-                                              progressColor: Colors.blue[300],
                                             ),
                                           ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                )
-                              ],
+                                  )
+                                ],
+                              ),
                             ),
                           ),
                         );
                       });
                   }
-                    return new Container(
-                      alignment: AlignmentDirectional.center,
-                      child: new CircularProgressIndicator(),
-                    );
+                  return new Container(
+                    alignment: AlignmentDirectional.center,
+                    child: new CircularProgressIndicator(),
+                  );
               },
             ),
           ),
@@ -191,6 +202,63 @@ class _MainPageState extends State<MainPage> {
 
   }
 
+  showDialogDetailsCategory(int _idCategory, String nameCategory, String urlCategory){
+    var width = MediaQuery.of(context).size.width;
+    
+    Alert(
+      context: context,
+      title: "Categoria:",
+      style: AlertStyle(overlayColor: Colors.orange[400]),
+      content: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              Image(
+                image: AssetImage(urlCategory),
+                width: 200,
+                height: 200 ,
+              ),
+              Text(nameCategory, textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold),),
+              SizedBox(height: 20.0,),
+              Text('Aprende algunas palabras de la Categoria $nameCategory.' , textAlign: TextAlign.justify,),
+              SizedBox(height: 20.0,),
+              Text('Logros' , textAlign: TextAlign.center,style: TextStyle(fontWeight: FontWeight.bold),),
+              SizedBox(height: 20.0,),
+              LinearPercentIndicator(
+                width: MediaQuery.of(context).size.width - 120,
+                lineHeight: 14.0,
+                percent: 0.5,
+                center: Text(
+                  "50%",
+                  style: new TextStyle(fontSize: 12.0,fontWeight: FontWeight.bold),
+                ),
+                linearStrokeCap: LinearStrokeCap.roundAll,
+                backgroundColor: Colors.grey,
+                progressColor: Colors.blue[300],
+              ),
+            ],
+          ),
+        ),
+      buttons: [
+        DialogButton(
+          onPressed: () =>Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => LearnPage())),
+          child: Text(
+            "Aprender",
+            style: TextStyle(color: Colors.white, fontSize: width/28),
+          ),
+          color: Colors.green,
+        ),
+        DialogButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text(
+            "Evaluar",
+            style: TextStyle(color: Colors.white, fontSize: width/28),
+          ),
+          color: Colors.orange,
+        ),
+      ],
+    ).show();
+  }
+ 
 }
 
 class ArcClipper extends CustomClipper<Path> {

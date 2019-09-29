@@ -34,7 +34,7 @@ class DBLenguajeSenas{
     //create table
     await db.execute('CREATE TABLE Users (idUsers INTEGER PRIMARY KEY AUTOINCREMENT, nameUsers VARCHAR(30) )');
     await db.execute('CREATE TABLE Categorys (idCategorys INTEGER PRIMARY KEY AUTOINCREMENT, nameCategorys VARCHAR(30), urlCategorys VARCHAR(30) )');
-  //   await db.execute('CREATE TABLE DetailCategory (idDetailCategory INTEGER PRIMARY KEY AUTOINCREMENT, idCategory INTEGER, urlImageGif Text, word VARCHAR(30) );');
+    await db.execute('CREATE TABLE DetailCategorys (idDetailCategorys INTEGER PRIMARY KEY AUTOINCREMENT, idCategorysFr INTEGER, urlImageGif Text, word VARCHAR(30) )');
   //   await db.execute('CREATE TABLE Achievements (idAchievements INTEGER PRIMARY KEY AUTOINCREMENT, idUsers INTEGER, idCategory INTEGER, porcentage FLOAT(2) );');
   }
 
@@ -92,7 +92,7 @@ class DBLenguajeSenas{
   }
 
 
-  // Get User
+  // Get Category
   Future<List<Category>> getCategorys() async{
     var dbConnection = await db;
 
@@ -119,23 +119,23 @@ class DBLenguajeSenas{
     var category = [
       {
         "nameCategory" : "Familia",
-        "urlCategory"  : "assets/activity/family/logo_family2.png"
+        "urlCategory"  : "assets/activity/family/logo_family.png"
       },
       {
         "nameCategory" : "Alimentos",
-        "urlCategory"  : "assets/activity/aliments/logo_aliments2.jpg"
+        "urlCategory"  : "assets/activity/aliments/logo_aliments.png"
       },
       {
         "nameCategory" : "Animales",
-        "urlCategory"  : "assets/activity/animals/logo_animals2.jpg"
+        "urlCategory"  : "assets/activity/animals/logo_animals.png"
       },
       {
         "nameCategory" : "Numeros",
-        "urlCategory"  : "assets/activity/numbers/logo_numbers.jpg"
+        "urlCategory"  : "assets/activity/numbers/logo_numbers.png"
       },
       {
         "nameCategory" : "Colores",
-        "urlCategory"  : "assets/activity/colors/logo_colors2.jpg"
+        "urlCategory"  : "assets/activity/colors/logo_colors.png"
       },
     ];
 
@@ -145,4 +145,82 @@ class DBLenguajeSenas{
       return await transaction.rawInsert(query);
     });
   }
+
+
+
+  // Get DetailCategory
+  Future<List<DetailCategory>> getDetailCategorys() async{
+    var dbConnection = await db;
+
+    List<Map> list = await dbConnection.rawQuery('SELECT * FROM Categorys INNER JOIN DetailCategorys ON DetailCategorys.idCategorysFr = Categorys.idCategorys');
+    List<DetailCategory> detailCategorys = new List();
+
+    for(int i = 0; i< list.length; i++)
+    {
+      DetailCategory detailCategory = new DetailCategory();
+      detailCategory.idDetailCategory = list[i]['idDetailCategorys'];
+      detailCategory.idCategory = list[i]['idCategorys'];
+      detailCategory.urlImageGif =  list[i]['urlImageGif'];
+      detailCategory.word =  list[i]['word'];
+
+      detailCategorys.add(detailCategory);
+    }
+
+    return detailCategorys;
+  }
+
+
+
+   //add detailcategory
+  void addDetailCategory () async{
+      var dbConnection = await db;
+      int idCategory = 0;
+
+      var detailCategory = [
+        {
+          "nameCategory" : "Familia",
+          "urlCategoryGif"  : "assets/activity/family/familia.gif",
+          "word" : "Familia"
+        },
+        {
+          "nameCategory" : "Alimentos",
+          "urlCategoryGif"  : "assets/activity/aliments/alimentos.gif",
+          "word" : "Alimentos"
+        },
+        {
+          "nameCategory" : "Animales",
+          "urlCategoryGif"  : "assets/activity/animals/animales.gif",
+          "word" : "Animales"
+        },
+        {
+          "nameCategory" : "Numeros",
+          "urlCategoryGif"  : "assets/activity/numbers/numeros.gif",
+          "word" : "Numeros"
+        },
+        {
+          "nameCategory" : "Colores",
+          "urlCategoryGif"  : "assets/activity/colors/colores.gif",
+          "word" : "Colores"
+        },
+      ];
+
+      List<Map> list = await dbConnection.rawQuery('SELECT * FROM Categorys');
+
+      for (int i = 0; i < list.length; i++) {
+        for(int d = 0; d< detailCategory.length; d++) {
+          if(detailCategory[d]['nameCategory'] == list[i]['nameCategorys']){
+            idCategory = list[i]['idCategorys'];
+
+            String query = 'INSERT INTO DetailCategorys (idCategorys, urlImageGif, word) VALUES (\'$idCategory\',\'${detailCategory[d]['urlCategoryGif']}\',\'${detailCategory[d]['word']}\')';
+            await dbConnection.transaction((transaction) async{
+              return await transaction.rawInsert(query);
+            });
+
+          }
+        }
+      }
+
+
+  }
+
 }
